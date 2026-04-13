@@ -1,57 +1,92 @@
-# File2Link Clean
+# File2Link
 
-A fresh implementation of a Telegram media link service with the same core behavior and a new architecture.
+File2Link is a FastAPI service that converts Telegram-stored media into secure stream and direct-download links.
 
-## What is different
+It is designed for bots and automation workflows where files are saved in a Telegram log channel and then served through web URLs with token-based access control.
 
-- New modular codebase under `app/`
-- Signed expiring token system using HMAC-SHA256
-- Built-in `/health` endpoint
-- Simpler maintainable templates
+## Features
 
-## Core behavior preserved
+- Signed, expiring access tokens
+- Stream page endpoint for browser playback
+- Direct download endpoint with HTTP range support
+- Telegram integration through Telethon
+- Health check endpoint for uptime monitoring
 
-- Fetch media from a Telegram log channel by message ID
-- Stream using browser-compatible player endpoint
-- Download with HTTP range support
+## Requirements
 
-## Setup
+- Python 3.11+
+- Telegram `API_ID` and `API_HASH`
+- Telegram bot token
+- Telegram log channel ID
 
-1. Create and activate a virtual environment.
-2. Install dependencies:
+## Installation
 
 ```bash
+git clone https://github.com/LeoAristocrat/File2Link.git
+cd File2Link
 pip install -r requirements.txt
 ```
 
-3. Copy `.env.example` to `.env` and fill values.
-4. Run server:
+Copy the example environment file and update values:
+
+```bash
+cp .env.example .env
+```
+
+## Configuration
+
+Set these values in `.env`:
+
+- `APP_NAME` - Display name shown by the API
+- `API_ID` - Telegram API ID
+- `API_HASH` - Telegram API hash
+- `BOT_TOKEN` - Bot token from BotFather
+- `LOG_CHANNEL_ID` - Channel ID where source files are stored
+- `SESSION_NAME` - Telethon session name
+- `AUTH_SECRET` - Secret used to sign tokens
+- `TOKEN_TTL_SECONDS` - Default token lifetime (seconds)
+- `ADMIN_KEY` - Optional key required to create tokens
+
+## Run
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-## Token workflow
+## API Endpoints
 
-1. Generate token:
+- `GET /` - Homepage
+- `GET /health` - Health status
+- `GET /token/{file_id}` - Generate signed token
+- `GET /stream/{file_id}` - Render player page
+- `GET /dl/{file_id}` - Download or stream file bytes
+
+## Basic Flow
+
+1. Request a token for a Telegram message ID.
+2. Open `/stream/{file_id}?token=...` for browser playback.
+3. Use `/dl/{file_id}?token=...` for direct file delivery.
+
+## Example Requests
+
+Create token:
 
 ```bash
-GET /token/{file_id}?admin_key=YOUR_ADMIN_KEY
+curl "http://localhost:8000/token/12345?admin_key=YOUR_ADMIN_KEY"
 ```
 
-2. Stream:
+Open stream page:
 
 ```bash
-GET /stream/{file_id}?token=TOKEN
+curl "http://localhost:8000/stream/12345?token=YOUR_TOKEN"
 ```
 
-3. Download:
+Download with range:
 
 ```bash
-GET /dl/{file_id}?token=TOKEN
+curl -H "Range: bytes=0-1048575" "http://localhost:8000/dl/12345?token=YOUR_TOKEN"
 ```
 
-## Notes
+## License
 
-- `API_ID`, `API_HASH`, `BOT_TOKEN`, and `LOG_CHANNEL_ID` are required.
-- Set a strong `AUTH_SECRET` in production.
+MIT
