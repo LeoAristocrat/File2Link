@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Player {{ file_id }}</title>
+  <style>
+    body { margin: 0; background: #020617; color: #f8fafc; font-family: Segoe UI, Arial, sans-serif; }
+    main { min-height: 100vh; display: grid; place-items: center; padding: 1rem; }
+    .panel { width: min(960px, 95vw); }
+    video { width: 100%; border-radius: 12px; background: black; }
+    a { color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <video controls preload="metadata" src="{{ download_url }}"></video>
+      <p>Direct download: <a href="{{ download_url }}">{{ download_url }}</a></p>
+    </section>
+  </main>
+</body>
+</html>
