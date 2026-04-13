@@ -1,4 +1,5 @@
 # File2Link
+![File2Link Banner](https://i.ibb.co/7tKcTg7K/Chat-GPT-Image-Apr-13-2026-11-18-07-AM.png)
 
 File2Link is a FastAPI service that converts Telegram-stored media into secure stream and direct-download links.
 
